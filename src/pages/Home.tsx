@@ -220,7 +220,7 @@ const Home = () => {
         </Center>
       ) : (
         <Flex gap="60px" flexWrap={"wrap"}>
-          {importFromFlask.length > 0 &&
+          {/* {importFromFlask.length > 0 &&
             importFromFlask.map((item, i) => (
               <ShowInfoCard
                 key={i}
@@ -230,7 +230,17 @@ const Home = () => {
                 tag={item.retailer_detail}
                 title={item.food_name}
               />
-            ))}
+            ))} */}
+          {ResultItems.map((item, i) => (
+            <ShowInfoCard
+              key={i}
+              price={item.price}
+              imgPath={item.imgPath}
+              dueDate={item.duedate}
+              // tag={item.}
+              title={item.titile}
+            />
+          ))}
         </Flex>
       )}
     </>
