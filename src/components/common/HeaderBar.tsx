@@ -36,23 +36,30 @@ import {
   Image,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
-
+import { useNavigate } from "react-router-dom";
 const Links = ["Dashboard", "Projects", "Team"];
 
-const NavLink = ({ children, to }: { children: ReactNode; to: string }) => (
-  <Link
-    px={2}
-    py={1}
-    rounded={"md"}
-    _hover={{
-      textDecoration: "none",
-      bg: useColorModeValue("gray.200", "gray.700"),
-    }}
-    href={to}
-  >
-    {children}
-  </Link>
-);
+const NavLink = ({ children, to }: { children: ReactNode; to: string }) => {
+  const navigate = useNavigate();
+  return (
+    <>
+      <Box
+        px={2}
+        py={1}
+        rounded={"md"}
+        _hover={{
+          textDecoration: "none",
+          bg: useColorModeValue("gray.200", "gray.700"),
+        }}
+        onClick={() => {
+          navigate(to);
+        }}
+      >
+        {children}
+      </Box>
+    </>
+  );
+};
 
 export default function Simple() {
   const { isOpen, onOpen, onClose } = useDisclosure();
