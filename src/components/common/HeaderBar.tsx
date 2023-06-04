@@ -33,6 +33,7 @@ import {
   useDisclosure,
   useColorModeValue,
   Stack,
+  Image,
 } from "@chakra-ui/react";
 import { HamburgerIcon, CloseIcon } from "@chakra-ui/icons";
 
@@ -73,8 +74,8 @@ export default function Simple() {
           />
           <HStack spacing={8} alignItems={"center"}>
             <NavLink to="/">
-              <Box fontWeight={700} fontSize="20px">
-                Service Name
+              <Box maxW="106px">
+                <Image src="/Logo.png" />
               </Box>
             </NavLink>
             <HStack
