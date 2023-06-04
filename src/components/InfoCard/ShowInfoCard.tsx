@@ -31,7 +31,7 @@ const ShowInfoCard = ({
   tag?: string;
 }) => {
   return (
-    <Card maxW="260px">
+    <Card width="260px">
       <CardBody>
         <AspectRatio ratio={16 / 11}>
           <Image

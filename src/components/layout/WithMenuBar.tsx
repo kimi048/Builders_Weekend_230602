@@ -14,7 +14,7 @@ const WithMenuBar: React.FC = () => {
     <>
       <HeaderBar />
       <Wrapper>
-        <Box maxW="900px" paddingX={6}>
+        <Box width="1000px" paddingX={6}>
           <Outlet />
         </Box>
       </Wrapper>
