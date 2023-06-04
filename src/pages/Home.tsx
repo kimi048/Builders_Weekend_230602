@@ -10,12 +10,16 @@ import {
   Tag,
   TagLabel,
   TagCloseButton,
+  Spinner,
+  Center,
 } from "@chakra-ui/react";
 // import styled from "@emotion/styled";
 import { useState, useEffect, useMemo } from "react";
 import { TodoItem } from "../types/todoItem";
 import { dataClient, adminClient } from "../util/morphClient";
 import ShowInfoCard from "../components/InfoCard/ShowInfoCard";
+import axios from "axios";
+const flaskBaseUrl = import.meta.env.VITE_FLASK_BASEURL;
 const Home = () => {
   const TagListsAll = [
     "Bread and Bakery",
@@ -31,7 +35,7 @@ const Home = () => {
     "Snak",
     "Drinks",
   ];
-  const [todos, setTodos] = useState<TodoItem[]>([]);
+  // const [todos, setTodos] = useState<TodoItem[]>([]);
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const TagsNotSelected = useMemo<string[]>(() => {
     const restItems = TagListsAll.filter((tag) => {
@@ -42,18 +46,33 @@ const Home = () => {
   }, [selectedTags]);
   const apikey = import.meta.env.VITE_MORPH_APIKEY1;
   const baseUrl = import.meta.env.VITE_MORPH_APIURL1;
+  type flaskItem = {
+    food_detail?: string;
+    food_name?: string;
+    image_path?: string;
+    price?: string;
+    retailer_detail?: string;
+  };
+  const [importFromFlask, setImportFromFlask] = useState<flaskItem[]>([]);
   useEffect(() => {
     const fetcher = async () => {
-      const { items: fetchedTodos } = await dataClient.queryRecords<TodoItem>(
-        baseUrl,
-        apikey,
-        {
-          select: ["id", "title", "body", "isdone", "duedate"],
-          limit: 100,
-        }
-      );
-      setTodos(fetchedTodos);
-      console.log(fetchedTodos);
+      if (flaskBaseUrl) {
+        const url = flaskBaseUrl + "/users";
+        const response = await axios.get(url);
+        console.log(response.data);
+        setImportFromFlask(response.data);
+        //Morph
+        const { items: fetchedTodos } = await dataClient.queryRecords<TodoItem>(
+          baseUrl,
+          apikey,
+          {
+            select: ["id", "title", "body", "isdone", "duedate"],
+            limit: 100,
+          }
+        );
+        // setTodos(fetchedTodos);
+        console.log(fetchedTodos);
+      }
     };
     fetcher();
   }, []);
@@ -122,12 +141,42 @@ const Home = () => {
         "https://images.unsplash.com/photo-1516594798947-e65505dbb29d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=3570&q=80",
     },
   ];
+  const [isFetching, setIsFetching] = useState<boolean>(false);
+  const onClickSearch = async (query: string) => {
+    try {
+      if (query.length > 0 && flaskBaseUrl) {
+        setIsFetching(true);
+        const response = await axios.get(
+          `${flaskBaseUrl}/users?params=${query}`
+        );
+        setImportFromFlask(response.data as flaskItem[]);
+        return setIsFetching(false);
+      }
+    } catch (e) {
+      setIsFetching(false);
+      alert(e);
+    }
+  };
+  const [queryLetter, setQueryLetter] = useState<string>("");
   return (
     <>
       <Heading pt={8}>Search</Heading>
       <Flex mt={3} pb={8}>
-        <Input mr={6} />
-        <Button colorScheme="pink">Search</Button>
+        <Input
+          mr={6}
+          value={queryLetter}
+          onChange={(e) => {
+            setQueryLetter(e.target.value);
+          }}
+        />
+        <Button
+          colorScheme="pink"
+          onClick={() => {
+            onClickSearch(queryLetter);
+          }}
+        >
+          Search
+        </Button>
       </Flex>
       <Heading>Tags</Heading>
       <Box pb={6}>
@@ -165,19 +214,25 @@ const Home = () => {
           </Box>
         )}
       </Box>
-
-      <Flex gap="60px" flexWrap={"wrap"}>
-        {todos.length > 0 &&
-          ResultItems.map((item) => (
-            // <TodoEditableCard key={todo.id} todo={todo} />
-            <ShowInfoCard
-              price={item.price}
-              imgPath={item.imgPath}
-              dueDate={item.duedate}
-              title={item.titile}
-            />
-          ))}
-      </Flex>
+      {isFetching ? (
+        <Center>
+          <Spinner mt="160px" size="lg" thickness="4px" />
+        </Center>
+      ) : (
+        <Flex gap="60px" flexWrap={"wrap"}>
+          {importFromFlask.length > 0 &&
+            importFromFlask.map((item, i) => (
+              <ShowInfoCard
+                key={i}
+                price={item.price}
+                imgPath={item.image_path}
+                dueDate={item.food_detail}
+                tag={item.retailer_detail}
+                title={item.food_name}
+              />
+            ))}
+        </Flex>
+      )}
     </>
   );
 };
