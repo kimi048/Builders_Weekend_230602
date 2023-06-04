@@ -147,7 +147,7 @@ const Home = () => {
       if (query.length > 0 && flaskBaseUrl) {
         setIsFetching(true);
         const response = await axios.get(
-          `${flaskBaseUrl}/users?params=${query}`
+          `${flaskBaseUrl}/users?param=${query}`
         );
         setImportFromFlask(response.data as flaskItem[]);
         return setIsFetching(false);
@@ -220,27 +220,27 @@ const Home = () => {
         </Center>
       ) : (
         <Flex gap="60px" flexWrap={"wrap"}>
-          {/* {importFromFlask.length > 0 &&
-            importFromFlask.map((item, i) => (
-              <ShowInfoCard
-                key={i}
-                price={item.price}
-                imgPath={item.image_path}
-                dueDate={item.food_detail}
-                tag={item.retailer_detail}
-                title={item.food_name}
-              />
-            ))} */}
-          {ResultItems.map((item, i) => (
-            <ShowInfoCard
-              key={i}
-              price={item.price}
-              imgPath={item.imgPath}
-              dueDate={item.duedate}
-              // tag={item.}
-              title={item.titile}
-            />
-          ))}
+          {importFromFlask.length > 0
+            ? importFromFlask.map((item, i) => (
+                <ShowInfoCard
+                  key={i}
+                  price={item.price}
+                  imgPath={item.image_path}
+                  dueDate={item.food_detail}
+                  tag={item.retailer_detail}
+                  title={item.food_name}
+                />
+              ))
+            : ResultItems.map((item, i) => (
+                <ShowInfoCard
+                  key={i}
+                  price={item.price}
+                  imgPath={item.imgPath}
+                  dueDate={item.duedate}
+                  // tag={item.}
+                  title={item.titile}
+                />
+              ))}
         </Flex>
       )}
     </>
