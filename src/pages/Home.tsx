@@ -219,7 +219,11 @@ const Home = () => {
           <Spinner mt="160px" size="lg" thickness="4px" />
         </Center>
       ) : (
-        <Flex gap="60px" flexWrap={"wrap"}>
+        <Flex
+          gap="60px"
+          flexWrap={"wrap"}
+          direction={{ base: "column", md: "row" }}
+        >
           {importFromFlask.length > 0
             ? importFromFlask.map((item, i) => (
                 <ShowInfoCard
